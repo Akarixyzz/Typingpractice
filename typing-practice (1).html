@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Typing Practice Minimal</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Prompt', sans-serif;
+    }
+  body {
+  background-image: url('https://i.pinimg.com/1200x/56/9f/ae/569fae1eb38a2c319545c7c0f4379ca1.jpg'); /* */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: #000000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+    .typing-box {
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      text-align: center;
+      width: 90%;
+      max-width: 600px;
+    }
+    #textToType {
+      font-size: 28px;
+      margin: 30px 0;
+      color: #555;
+    }
+    #userInput {
+      width: 100%;
+      padding: 14px;
+      font-size: 20px;
+      border: 2px solid #ddd;
+      border-radius: 12px;
+      outline: none;
+      margin-bottom: 20px;
+    }
+    #userInput:focus {
+      border-color: #333;
+    }
+    .button-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    button {
+      background: #333;
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      font-size: 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #555;
+    }
+    #timer, #result {
+      margin-top: 10px;
+      font-size: 20px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="typing-box">
+    <h1>Typing Practice</h1>
+    <div id="timer">เวลาที่ใช้: 0 วินาที</div>
+    <div id="textToType">กำลังโหลดคำ...</div>
+    <input type="text" id="userInput" placeholder="พิมพ์ตรงนี้..." oninput="checkTyping()">
+    <div id="result"></div>
+    <div class="button-row">
+      <button onclick="resetGame()">สุ่มคำใหม่</button>
+    </div>
+  </div>
+
+  <script>
+    const texts = [
+  "ปรปักษ์",
+  "มหรรณพ",
+  "อัศจรรย์ใจ",
+  "ปฏิภาณไหวพริบ",
+  "วาทศิลป์",
+  "อุปาทานหมู่",
+  "สรรพสิ่ง",
+  "จรรยาบรรณ",
+  "อภิสิทธิ์ชน",
+  "อภิปรัชญา",
+  "ขจรขจาย",
+  "บรรเจิด",
+  "พิลึกกึกกือ",
+  "สังหรณ์ใจ",
+  "สังวรไว้",
+  "จิตสำนึก",
+  "รื่นรมย์",
+  "เลศนัย",
+  "อนิจจัง",
+  "อเนกประการ"
+];
+
+    let textToType = "";
+    let startTime = null;
+    let timerInterval = null;
+
+    function pickRandomText() {
+      textToType = texts[Math.floor(Math.random() * texts.length)];
+      document.getElementById("textToType").innerText = textToType;
+    }
+
+    function startTimer() {
+      startTime = new Date();
+      timerInterval = setInterval(() => {
+        const now = new Date();
+        const elapsed = Math.floor((now - startTime) / 1000);
+        document.getElementById("timer").innerText = `เวลาที่ใช้: ${elapsed} วินาที`;
+      }, 1000);
+    }
+
+    function checkTyping() {
+      const userInput = document.getElementById("userInput").value;
+
+      if (startTime === null) startTimer();
+
+      let correctCount = 0;
+      for (let i = 0; i < userInput.length; i++) {
+        if (userInput[i] === textToType[i]) correctCount++;
+      }
+      const wrongCount = userInput.length - correctCount;
+
+      document.getElementById("result").innerText = 
+        `ถูกต้อง: ${correctCount} | ผิด: ${wrongCount}`;
+
+      if (userInput === textToType) {
+        clearInterval(timerInterval);
+        const finalTime = Math.floor((new Date() - startTime) / 1000);
+        document.getElementById("result").innerText += ` — เสร็จใน ${finalTime} วินาที!`;
+      }
+    }
+
+    function resetGame() {
+      clearInterval(timerInterval);
+      startTime = null;
+      document.getElementById("timer").innerText = "เวลาที่ใช้: 0 วินาที";
+      document.getElementById("userInput").value = "";
+      document.getElementById("result").innerText = "";
+      pickRandomText();
+    }
+
+    // ตรวจจับกด Enter เพื่อสุ่มคำใหม่ถ้าพิมพ์ถูก
+    document.getElementById("userInput").addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        if (document.getElementById("userInput").value === textToType) {
+          resetGame();
+        }
+      }
+    });
+
+    // เรียกสุ่มคำตอนโหลดหน้าเว็บ
+    window.onload = pickRandomText;
+  </script>
+
+</body>
+</html>
